@@ -49,4 +49,19 @@ FFI_PLUGIN_EXPORT int pty_getpid(PtyHandle *handle);
 
 FFI_PLUGIN_EXPORT char *pty_error(void);
 
+// Buffer management structures and functions (Echorb enhancement)
+typedef struct PtyBufferStatus
+{
+    int current_size;
+    int capacity;
+    bool is_full;
+    bool can_write;
+} PtyBufferStatus;
+
+FFI_PLUGIN_EXPORT PtyBufferStatus pty_get_buffer_status(PtyHandle *handle);
+
+FFI_PLUGIN_EXPORT int pty_write_nonblocking(PtyHandle *handle, char *buffer, int length, int *bytes_written);
+
+FFI_PLUGIN_EXPORT bool pty_can_write(PtyHandle *handle);
+
 #endif

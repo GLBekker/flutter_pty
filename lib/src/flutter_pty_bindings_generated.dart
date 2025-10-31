@@ -462,6 +462,58 @@ class FlutterPtyBindings {
           'pty_error');
   late final _pty_error =
       _pty_errorPtr.asFunction<ffi.Pointer<ffi.Char> Function()>();
+
+  // Buffer management functions (Echorb enhancement)
+  PtyBufferStatus pty_get_buffer_status(
+    ffi.Pointer<PtyHandle> handle,
+  ) {
+    return _pty_get_buffer_status(
+      handle,
+    );
+  }
+
+  late final _pty_get_buffer_statusPtr = _lookup<
+      ffi.NativeFunction<
+          PtyBufferStatus Function(
+              ffi.Pointer<PtyHandle>)>>('pty_get_buffer_status');
+  late final _pty_get_buffer_status = _pty_get_buffer_statusPtr
+      .asFunction<PtyBufferStatus Function(ffi.Pointer<PtyHandle>)>();
+
+  int pty_write_nonblocking(
+    ffi.Pointer<PtyHandle> handle,
+    ffi.Pointer<ffi.Char> buffer,
+    int length,
+    ffi.Pointer<ffi.Int> bytes_written,
+  ) {
+    return _pty_write_nonblocking(
+      handle,
+      buffer,
+      length,
+      bytes_written,
+    );
+  }
+
+  late final _pty_write_nonblockingPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<PtyHandle>, ffi.Pointer<ffi.Char>,
+              ffi.Int, ffi.Pointer<ffi.Int>)>>('pty_write_nonblocking');
+  late final _pty_write_nonblocking = _pty_write_nonblockingPtr.asFunction<
+      int Function(ffi.Pointer<PtyHandle>, ffi.Pointer<ffi.Char>, int,
+          ffi.Pointer<ffi.Int>)>();
+
+  bool pty_can_write(
+    ffi.Pointer<PtyHandle> handle,
+  ) {
+    return _pty_can_write(
+      handle,
+    );
+  }
+
+  late final _pty_can_writePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Bool Function(ffi.Pointer<PtyHandle>)>>('pty_can_write');
+  late final _pty_can_write = _pty_can_writePtr
+      .asFunction<bool Function(ffi.Pointer<PtyHandle>)>();
 }
 
 typedef Dart_PostCObject_Type = ffi.Pointer<
@@ -775,3 +827,18 @@ final class PtyOptions extends ffi.Struct {
 }
 
 final class PtyHandle extends ffi.Opaque {}
+
+// Buffer management structures and functions (Echorb enhancement)
+final class PtyBufferStatus extends ffi.Struct {
+  @ffi.Int()
+  external int current_size;
+
+  @ffi.Int()
+  external int capacity;
+
+  @ffi.Bool()
+  external bool is_full;
+
+  @ffi.Bool()
+  external bool can_write;
+}

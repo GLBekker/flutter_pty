@@ -235,3 +235,68 @@ FFI_PLUGIN_EXPORT char *pty_error(void)
 {
     return NULL;
 }
+
+// Buffer management functions (Echorb enhancement)
+#include <fcntl.h>
+#include <errno.h>
+
+FFI_PLUGIN_EXPORT PtyBufferStatus pty_get_buffer_status(PtyHandle *handle)
+{
+    PtyBufferStatus status;
+    int bytes_available = 0;
+    
+    // Try to get available buffer space
+    if (ioctl(handle->ptm, FIONREAD, &bytes_available) == -1)
+    {
+        bytes_available = 0;
+    }
+    
+    // Typical PTY buffer is 4096 bytes
+    int buffer_capacity = 4096;
+    
+    status.current_size = bytes_available;
+    status.capacity = buffer_capacity;
+    status.is_full = (bytes_available >= (buffer_capacity * 9 / 10)); // 90% threshold
+    status.can_write = !status.is_full;
+    
+    return status;
+}
+
+FFI_PLUGIN_EXPORT int pty_write_nonblocking(PtyHandle *handle, char *buffer, int length, int *bytes_written)
+{
+    // Save current flags
+    int flags = fcntl(handle->ptm, F_GETFL, 0);
+    
+    // Set non-blocking
+    fcntl(handle->ptm, F_SETFL, flags | O_NONBLOCK);
+    
+    ssize_t result = write(handle->ptm, buffer, length);
+    
+    // Restore original flags
+    fcntl(handle->ptm, F_SETFL, flags);
+    
+    if (result < 0)
+    {
+        *bytes_written = 0;
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+        {
+            return 1; // PTY_WRITE_WOULD_BLOCK
+        }
+        return -1; // PTY_WRITE_ERROR
+    }
+    
+    *bytes_written = (int)result;
+    
+    if (result < length)
+    {
+        return 2; // PTY_WRITE_BUFFER_FULL
+    }
+    
+    return 0; // PTY_WRITE_SUCCESS
+}
+
+FFI_PLUGIN_EXPORT bool pty_can_write(PtyHandle *handle)
+{
+    PtyBufferStatus status = pty_get_buffer_status(handle);
+    return status.can_write;
+}

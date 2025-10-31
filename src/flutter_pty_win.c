@@ -468,3 +468,57 @@ FFI_PLUGIN_EXPORT char *pty_error()
 {
     return error_message;
 }
+
+// Buffer management functions (Echorb enhancement)
+FFI_PLUGIN_EXPORT PtyBufferStatus pty_get_buffer_status(PtyHandle *handle)
+{
+    PtyBufferStatus status;
+    
+    // Windows ConPTY doesn't expose direct buffer status
+    // Conservative approach: assume always writable
+    status.current_size = 0;
+    status.capacity = 4096;
+    status.is_full = FALSE;
+    status.can_write = TRUE;
+    
+    return status;
+}
+
+FFI_PLUGIN_EXPORT int pty_write_nonblocking(PtyHandle *handle, char *buffer, int length, int *bytes_written)
+{
+    DWORD dwBytesWritten = 0;
+    
+    BOOL result = WriteFile(
+        handle->inputWriteSide,
+        buffer,
+        length,
+        &dwBytesWritten,
+        NULL
+    );
+    
+    *bytes_written = (int)dwBytesWritten;
+    
+    if (!result)
+    {
+        DWORD error = GetLastError();
+        if (error == ERROR_NO_SYSTEM_RESOURCES || error == ERROR_NOT_ENOUGH_MEMORY)
+        {
+            return 2; // PTY_WRITE_BUFFER_FULL
+        }
+        return -1; // PTY_WRITE_ERROR
+    }
+    
+    FlushFileBuffers(handle->inputWriteSide);
+    
+    if (dwBytesWritten < (DWORD)length)
+    {
+        return 2; // PTY_WRITE_BUFFER_FULL
+    }
+    
+    return 0; // PTY_WRITE_SUCCESS
+}
+
+FFI_PLUGIN_EXPORT bool pty_can_write(PtyHandle *handle)
+{
+    return TRUE; // Windows always optimistic
+}

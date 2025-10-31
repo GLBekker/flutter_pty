@@ -198,6 +198,61 @@ class Pty {
     _bindings.pty_ack_read(_handle);
   }
 
+
+  /// Get current buffer status (Echorb enhancement)
+  PtyBufferStatus getBufferStatus() {
+    final status = _bindings.pty_get_buffer_status(_handle);
+    return PtyBufferStatus(
+      currentSize: status.current_size,
+      capacity: status.capacity,
+      isFull: status.is_full,
+      canWrite: status.can_write,
+    );
+  }
+
+  /// Check if can write more data (Echorb enhancement)
+  bool canWrite() {
+    return _bindings.pty_can_write(_handle);
+  }
+
+  /// Write with automatic backpressure handling (Echorb enhancement)
+  Future<void> writeAsync(Uint8List data) async {
+    final buf = malloc<Int8>(data.length);
+    final bytesWritten = malloc<Int>();
+
+    try {
+      buf.asTypedList(data.length).setAll(0, data);
+      int totalWritten = 0;
+
+      while (totalWritten < data.length) {
+        final remaining = data.length - totalWritten;
+        final result = _bindings.pty_write_nonblocking(
+          _handle,
+          (buf + totalWritten).cast<Char>(),
+          remaining,
+          bytesWritten,
+        );
+
+        totalWritten += bytesWritten.value;
+
+        if (result == 0) {
+          // PTY_WRITE_SUCCESS
+          return;
+        } else if (result == 1 || result == 2) {
+          // WOULD_BLOCK or BUFFER_FULL
+          // Wait a bit for buffer to drain
+          await Future.delayed(const Duration(milliseconds: 10));
+          continue;
+        } else {
+          throw StateError('PTY write failed: $result');
+        }
+      }
+    } finally {
+      malloc.free(buf);
+      malloc.free(bytesWritten);
+    }
+  }
+
   void _onExitCode(dynamic exitCode) {
     _stdoutPort.close();
     _exitPort.close();
@@ -213,4 +268,23 @@ String? _getPtyError() {
   }
 
   return error.cast<Utf8>().toDartString();
+}
+
+/// Buffer status information (Echorb enhancement)
+class PtyBufferStatus {
+  final int currentSize;
+  final int capacity;
+  final bool isFull;
+  final bool canWrite;
+
+  PtyBufferStatus({
+    required this.currentSize,
+    required this.capacity,
+    required this.isFull,
+    required this.canWrite,
+  });
+
+  @override
+  String toString() =>
+      'PtyBufferStatus(current: $currentSize/$capacity, full: $isFull)';
 }

@@ -6,6 +6,20 @@
 #include "include/dart_api.h"
 #include "include/dart_api_dl.h"
 #include "include/dart_native_api.h"
+// Forward declarations for buffer management functions
+static VOID CALLBACK buffer_timer_callback(PVOID lpParam, BOOLEAN TimerOrWaitFired);
+static void buffer_manager_start_timer_win(PtyHandle *handle);
+static void buffer_manager_stop_timer_win(PtyHandle *handle);
+static PtyBufferManager *buffer_manager_create_win(int rows, int cols);
+static void buffer_manager_destroy_win(PtyBufferManager *mgr);
+static void buffer_manager_update_thresholds_win(PtyBufferManager *mgr, int rows, int cols);
+static void buffer_manager_notify_discard_win(PtyBufferManager *mgr, int bytes_discarded);
+static PtyBuffer *buffer_create(int initial_capacity);
+static void buffer_destroy(PtyBuffer *buf);
+static int buffer_grow(PtyBuffer *buf);
+static int buffer_add(PtyBuffer *buf, const char *data, int len);
+static int buffer_read(PtyBuffer *buf, char *out, int max_len);
+static void buffer_drain(PtyBuffer *buf);
 
 static LPWSTR build_command(char *executable, char **arguments)
 {

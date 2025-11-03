@@ -13,13 +13,14 @@ llvm-path:
 
 headers:
   entry-points:
+    - "src/include/dart_api_dl.h"
     - "src/flutter_pty.h"
   include-directives:
     - "src/flutter_pty.h"
     - "src/include/dart_api_dl.h"
 
 functions:
-  includes:
+  include:
     - Dart_InitializeApiDL
 
 preamble: |

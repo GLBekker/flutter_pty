@@ -28,6 +28,214 @@ class FlutterPtyBindings {
           lookup)
       : _lookup = lookup;
 
+  ffi.Pointer<PtyHandle> pty_create(
+    ffi.Pointer<PtyOptions> options,
+  ) {
+    return _pty_create(
+      options,
+    );
+  }
+
+  late final _pty_createPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<PtyHandle> Function(
+              ffi.Pointer<PtyOptions>)>>('pty_create');
+  late final _pty_create = _pty_createPtr
+      .asFunction<ffi.Pointer<PtyHandle> Function(ffi.Pointer<PtyOptions>)>();
+
+  void pty_write(
+    ffi.Pointer<PtyHandle> handle,
+    ffi.Pointer<ffi.Char> buffer,
+    int length,
+  ) {
+    return _pty_write(
+      handle,
+      buffer,
+      length,
+    );
+  }
+
+  late final _pty_writePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<PtyHandle>, ffi.Pointer<ffi.Char>,
+              ffi.Int)>>('pty_write');
+  late final _pty_write = _pty_writePtr.asFunction<
+      void Function(ffi.Pointer<PtyHandle>, ffi.Pointer<ffi.Char>, int)>();
+
+  void pty_ack_read(
+    ffi.Pointer<PtyHandle> handle,
+  ) {
+    return _pty_ack_read(
+      handle,
+    );
+  }
+
+  late final _pty_ack_readPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<PtyHandle>)>>(
+          'pty_ack_read');
+  late final _pty_ack_read =
+      _pty_ack_readPtr.asFunction<void Function(ffi.Pointer<PtyHandle>)>();
+
+  int pty_resize(
+    ffi.Pointer<PtyHandle> handle,
+    int rows,
+    int cols,
+  ) {
+    return _pty_resize(
+      handle,
+      rows,
+      cols,
+    );
+  }
+
+  late final _pty_resizePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<PtyHandle>, ffi.Int, ffi.Int)>>('pty_resize');
+  late final _pty_resize = _pty_resizePtr
+      .asFunction<int Function(ffi.Pointer<PtyHandle>, int, int)>();
+
+  int pty_getpid(
+    ffi.Pointer<PtyHandle> handle,
+  ) {
+    return _pty_getpid(
+      handle,
+    );
+  }
+
+  late final _pty_getpidPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<PtyHandle>)>>(
+          'pty_getpid');
+  late final _pty_getpid =
+      _pty_getpidPtr.asFunction<int Function(ffi.Pointer<PtyHandle>)>();
+
+  ffi.Pointer<ffi.Char> pty_error() {
+    return _pty_error();
+  }
+
+  late final _pty_errorPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+          'pty_error');
+  late final _pty_error =
+      _pty_errorPtr.asFunction<ffi.Pointer<ffi.Char> Function()>();
+
+  /// Legacy functions (kept for compatibility, but will use new implementation)
+  PtyBufferStatus pty_get_buffer_status(
+    ffi.Pointer<PtyHandle> handle,
+  ) {
+    return _pty_get_buffer_status(
+      handle,
+    );
+  }
+
+  late final _pty_get_buffer_statusPtr = _lookup<
+          ffi.NativeFunction<PtyBufferStatus Function(ffi.Pointer<PtyHandle>)>>(
+      'pty_get_buffer_status');
+  late final _pty_get_buffer_status = _pty_get_buffer_statusPtr
+      .asFunction<PtyBufferStatus Function(ffi.Pointer<PtyHandle>)>();
+
+  int pty_write_nonblocking(
+    ffi.Pointer<PtyHandle> handle,
+    ffi.Pointer<ffi.Char> buffer,
+    int length,
+    ffi.Pointer<ffi.Int> bytes_written,
+  ) {
+    return _pty_write_nonblocking(
+      handle,
+      buffer,
+      length,
+      bytes_written,
+    );
+  }
+
+  late final _pty_write_nonblockingPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<PtyHandle>, ffi.Pointer<ffi.Char>,
+              ffi.Int, ffi.Pointer<ffi.Int>)>>('pty_write_nonblocking');
+  late final _pty_write_nonblocking = _pty_write_nonblockingPtr.asFunction<
+      int Function(ffi.Pointer<PtyHandle>, ffi.Pointer<ffi.Char>, int,
+          ffi.Pointer<ffi.Int>)>();
+
+  bool pty_can_write(
+    ffi.Pointer<PtyHandle> handle,
+  ) {
+    return _pty_can_write(
+      handle,
+    );
+  }
+
+  late final _pty_can_writePtr =
+      _lookup<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<PtyHandle>)>>(
+          'pty_can_write');
+  late final _pty_can_write =
+      _pty_can_writePtr.asFunction<bool Function(ffi.Pointer<PtyHandle>)>();
+
+  /// NEW: TMUX-style buffer management functions
+  void pty_set_discard_notification_port(
+    ffi.Pointer<PtyHandle> handle,
+    int port,
+  ) {
+    return _pty_set_discard_notification_port(
+      handle,
+      port,
+    );
+  }
+
+  late final _pty_set_discard_notification_portPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<PtyHandle>,
+              Dart_Port)>>('pty_set_discard_notification_port');
+  late final _pty_set_discard_notification_port =
+      _pty_set_discard_notification_portPtr
+          .asFunction<void Function(ffi.Pointer<PtyHandle>, int)>();
+
+  int pty_get_discarded_bytes(
+    ffi.Pointer<PtyHandle> handle,
+  ) {
+    return _pty_get_discarded_bytes(
+      handle,
+    );
+  }
+
+  late final _pty_get_discarded_bytesPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<PtyHandle>)>>(
+          'pty_get_discarded_bytes');
+  late final _pty_get_discarded_bytes = _pty_get_discarded_bytesPtr
+      .asFunction<int Function(ffi.Pointer<PtyHandle>)>();
+
+  void pty_clear_discarded_bytes(
+    ffi.Pointer<PtyHandle> handle,
+  ) {
+    return _pty_clear_discarded_bytes(
+      handle,
+    );
+  }
+
+  late final _pty_clear_discarded_bytesPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<PtyHandle>)>>(
+          'pty_clear_discarded_bytes');
+  late final _pty_clear_discarded_bytes = _pty_clear_discarded_bytesPtr
+      .asFunction<void Function(ffi.Pointer<PtyHandle>)>();
+
+  void pty_write_buffered(
+    ffi.Pointer<PtyHandle> handle,
+    ffi.Pointer<ffi.Char> buffer,
+    int length,
+  ) {
+    return _pty_write_buffered(
+      handle,
+      buffer,
+      length,
+    );
+  }
+
+  late final _pty_write_bufferedPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<PtyHandle>, ffi.Pointer<ffi.Char>,
+              ffi.Int)>>('pty_write_buffered');
+  late final _pty_write_buffered = _pty_write_bufferedPtr.asFunction<
+      void Function(ffi.Pointer<PtyHandle>, ffi.Pointer<ffi.Char>, int)>();
+
   /// \mainpage Dynamically Linked Dart API
   ///
   /// This exposes a subset of symbols from dart_api.h and dart_native_api.h
@@ -373,6 +581,167 @@ class FlutterPtyBindings {
       _Dart_ExitScope_DL.value = value;
 }
 
+final class PtyOptions extends ffi.Struct {
+  @ffi.Int()
+  external int rows;
+
+  @ffi.Int()
+  external int cols;
+
+  external ffi.Pointer<ffi.Char> executable;
+
+  external ffi.Pointer<ffi.Pointer<ffi.Char>> arguments;
+
+  external ffi.Pointer<ffi.Pointer<ffi.Char>> environment;
+
+  external ffi.Pointer<ffi.Char> working_directory;
+
+  @Dart_Port()
+  external int stdout_port;
+
+  @Dart_Port()
+  external int exit_port;
+
+  @ffi.Bool()
+  external bool ackRead;
+}
+
+/// A port is used to send or receive inter-isolate messages
+typedef Dart_Port = ffi.Int64;
+
+final class PtyHandle extends ffi.Opaque {}
+
+/// Legacy buffer status (kept for compatibility, but deprecated)
+final class PtyBufferStatus extends ffi.Struct {
+  @ffi.Int()
+  external int current_size;
+
+  @ffi.Int()
+  external int capacity;
+
+  @ffi.Bool()
+  external bool is_full;
+
+  @ffi.Bool()
+  external bool can_write;
+}
+
+/// NEW: TMUX-style circular buffer
+final class PtyBuffer extends ffi.Struct {
+  /// Buffer data
+  external ffi.Pointer<ffi.Char> data;
+
+  /// Total capacity
+  @ffi.Int()
+  external int capacity;
+
+  /// Current data size
+  @ffi.Int()
+  external int size;
+
+  /// Read position (for circular buffer)
+  @ffi.Int()
+  external int read_pos;
+
+  /// Write position
+  @ffi.Int()
+  external int write_pos;
+}
+
+/// NEW: TMUX-style buffer manager with blocking and recovery
+final class PtyBufferManager extends ffi.Struct {
+  /// The internal buffer
+  external ffi.Pointer<PtyBuffer> buffer;
+
+  /// Currently in blocked state
+  @ffi.Bool()
+  external bool is_blocked;
+
+  /// Bytes discarded during block
+  @ffi.Int()
+  external int discarded_bytes;
+
+  /// Dynamic based on terminal size
+  @ffi.Int()
+  external int block_start_threshold;
+
+  /// Dynamic based on terminal size
+  @ffi.Int()
+  external int block_stop_threshold;
+
+  external HANDLE timer_queue;
+
+  external HANDLE timer_handle;
+
+  external CRITICAL_SECTION mutex;
+
+  /// Callback port for Dart notifications
+  @Dart_Port()
+  external int discard_notification_port;
+}
+
+typedef HANDLE = ffi.Pointer<ffi.Void>;
+typedef CRITICAL_SECTION = RTL_CRITICAL_SECTION;
+typedef RTL_CRITICAL_SECTION = _RTL_CRITICAL_SECTION;
+
+final class _RTL_CRITICAL_SECTION extends ffi.Struct {
+  external PRTL_CRITICAL_SECTION_DEBUG DebugInfo;
+
+  @LONG()
+  external int LockCount;
+
+  @LONG()
+  external int RecursionCount;
+
+  external HANDLE OwningThread;
+
+  external HANDLE LockSemaphore;
+
+  @ULONG_PTR()
+  external int SpinCount;
+}
+
+typedef PRTL_CRITICAL_SECTION_DEBUG = ffi.Pointer<_RTL_CRITICAL_SECTION_DEBUG>;
+
+final class _RTL_CRITICAL_SECTION_DEBUG extends ffi.Struct {
+  @WORD()
+  external int Type;
+
+  @WORD()
+  external int CreatorBackTraceIndex;
+
+  external ffi.Pointer<_RTL_CRITICAL_SECTION> CriticalSection;
+
+  external LIST_ENTRY ProcessLocksList;
+
+  @DWORD()
+  external int EntryCount;
+
+  @DWORD()
+  external int ContentionCount;
+
+  @DWORD()
+  external int Flags;
+
+  @WORD()
+  external int CreatorBackTraceIndexHigh;
+
+  @WORD()
+  external int Identifier;
+}
+
+typedef WORD = ffi.UnsignedShort;
+typedef LIST_ENTRY = _LIST_ENTRY;
+
+final class _LIST_ENTRY extends ffi.Struct {
+  external ffi.Pointer<_LIST_ENTRY> Flink;
+
+  external ffi.Pointer<_LIST_ENTRY> Blink;
+}
+
+typedef DWORD = ffi.UnsignedLong;
+typedef LONG = ffi.Long;
+typedef ULONG_PTR = ffi.UnsignedLongLong;
 typedef Dart_PostCObject_Type = ffi.Pointer<
     ffi.NativeFunction<
         ffi.Bool Function(
@@ -474,9 +843,6 @@ final class UnnamedStruct1 extends ffi.Struct {
   @Dart_Port()
   external int origin_id;
 }
-
-/// A port is used to send or receive inter-isolate messages
-typedef Dart_Port = ffi.Int64;
 
 final class UnnamedStruct2 extends ffi.Struct {
   @ffi.Int64()
@@ -657,162 +1023,3 @@ typedef Dart_EnterScope_Type
     = ffi.Pointer<ffi.NativeFunction<ffi.Void Function()>>;
 typedef Dart_ExitScope_Type
     = ffi.Pointer<ffi.NativeFunction<ffi.Void Function()>>;
-
-final class PtyOptions extends ffi.Struct {
-  @ffi.Int()
-  external int rows;
-
-  @ffi.Int()
-  external int cols;
-
-  external ffi.Pointer<ffi.Char> executable;
-
-  external ffi.Pointer<ffi.Pointer<ffi.Char>> arguments;
-
-  external ffi.Pointer<ffi.Pointer<ffi.Char>> environment;
-
-  external ffi.Pointer<ffi.Char> working_directory;
-
-  @Dart_Port()
-  external int stdout_port;
-
-  @Dart_Port()
-  external int exit_port;
-
-  @ffi.Bool()
-  external bool ackRead;
-}
-
-final class PtyHandle extends ffi.Opaque {}
-
-/// Legacy buffer status (kept for compatibility, but deprecated)
-final class PtyBufferStatus extends ffi.Struct {
-  @ffi.Int()
-  external int current_size;
-
-  @ffi.Int()
-  external int capacity;
-
-  @ffi.Bool()
-  external bool is_full;
-
-  @ffi.Bool()
-  external bool can_write;
-}
-
-/// NEW: TMUX-style circular buffer
-final class PtyBuffer extends ffi.Struct {
-  /// Buffer data
-  external ffi.Pointer<ffi.Char> data;
-
-  /// Total capacity
-  @ffi.Int()
-  external int capacity;
-
-  /// Current data size
-  @ffi.Int()
-  external int size;
-
-  /// Read position (for circular buffer)
-  @ffi.Int()
-  external int read_pos;
-
-  /// Write position
-  @ffi.Int()
-  external int write_pos;
-}
-
-/// NEW: TMUX-style buffer manager with blocking and recovery
-final class PtyBufferManager extends ffi.Struct {
-  /// The internal buffer
-  external ffi.Pointer<PtyBuffer> buffer;
-
-  /// Currently in blocked state
-  @ffi.Bool()
-  external bool is_blocked;
-
-  /// Bytes discarded during block
-  @ffi.Int()
-  external int discarded_bytes;
-
-  /// Dynamic based on terminal size
-  @ffi.Int()
-  external int block_start_threshold;
-
-  /// Dynamic based on terminal size
-  @ffi.Int()
-  external int block_stop_threshold;
-
-  external HANDLE timer_queue;
-
-  external HANDLE timer_handle;
-
-  external CRITICAL_SECTION mutex;
-
-  /// Callback port for Dart notifications
-  @Dart_Port()
-  external int discard_notification_port;
-}
-
-typedef HANDLE = ffi.Pointer<ffi.Void>;
-typedef CRITICAL_SECTION = RTL_CRITICAL_SECTION;
-typedef RTL_CRITICAL_SECTION = _RTL_CRITICAL_SECTION;
-
-final class _RTL_CRITICAL_SECTION extends ffi.Struct {
-  external PRTL_CRITICAL_SECTION_DEBUG DebugInfo;
-
-  @LONG()
-  external int LockCount;
-
-  @LONG()
-  external int RecursionCount;
-
-  external HANDLE OwningThread;
-
-  external HANDLE LockSemaphore;
-
-  @ULONG_PTR()
-  external int SpinCount;
-}
-
-typedef PRTL_CRITICAL_SECTION_DEBUG = ffi.Pointer<_RTL_CRITICAL_SECTION_DEBUG>;
-
-final class _RTL_CRITICAL_SECTION_DEBUG extends ffi.Struct {
-  @WORD()
-  external int Type;
-
-  @WORD()
-  external int CreatorBackTraceIndex;
-
-  external ffi.Pointer<_RTL_CRITICAL_SECTION> CriticalSection;
-
-  external LIST_ENTRY ProcessLocksList;
-
-  @DWORD()
-  external int EntryCount;
-
-  @DWORD()
-  external int ContentionCount;
-
-  @DWORD()
-  external int Flags;
-
-  @WORD()
-  external int CreatorBackTraceIndexHigh;
-
-  @WORD()
-  external int Identifier;
-}
-
-typedef WORD = ffi.UnsignedShort;
-typedef LIST_ENTRY = _LIST_ENTRY;
-
-final class _LIST_ENTRY extends ffi.Struct {
-  external ffi.Pointer<_LIST_ENTRY> Flink;
-
-  external ffi.Pointer<_LIST_ENTRY> Blink;
-}
-
-typedef DWORD = ffi.UnsignedLong;
-typedef LONG = ffi.Long;
-typedef ULONG_PTR = ffi.UnsignedLongLong;

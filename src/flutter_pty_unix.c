@@ -56,6 +56,9 @@ typedef struct ReadLoopOptions
 
 char *error_message = NULL;
 
+// Forward declaration for buffer management function
+static void buffer_manager_update_thresholds(PtyBufferManager *mgr, int rows, int cols);
+
 static void *read_loop(void *arg)
 {
     ReadLoopOptions *options = (ReadLoopOptions *)arg;

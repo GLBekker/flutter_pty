@@ -1,3 +1,22 @@
+## 0.5.0-echorb.1 (Echorb Fork)
+
+**Buffer Management Enhancements:**
+* Add `pty_get_buffer_status()` - Monitor PTY buffer fill level
+* Add `pty_write_nonblocking()` - Non-blocking write with result codes
+* Add `pty_can_write()` - Quick buffer availability check
+* Add `writeAsync()` - Dart async API with automatic backpressure handling
+* Add `PtyBufferStatus` class for buffer information
+* Cross-platform: Unix (forkpty) + Windows (ConPTY)
+* Inspired by tmux's libevent bufferevent approach
+* Eliminates manual chunking requirements
+
+**Backward Compatibility:**
+* All existing APIs unchanged
+* Existing `write()` method still works
+
+Fork maintained by: Echorb Team
+Original repo: https://github.com/TerminalStudio/flutter_pty
+
 ## 0.4.2
 * Fix Linux compile error, thanks [@mengyanshou].
 

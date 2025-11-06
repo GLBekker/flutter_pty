@@ -115,3 +115,62 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+
+## Echorb Fork Enhancements
+
+This fork adds buffer management and backpressure support inspired by tmux's bufferevent approach.
+
+### New Features
+
+#### Buffer Status API
+Check PTY buffer fill level and availability:
+```dart
+final status = pty.getBufferStatus();
+print('Buffer: ${status.currentSize}/${status.capacity}');
+print('Can write: ${status.canWrite}');
+```
+
+#### Async Write with Backpressure
+Write large commands without manual chunking:
+```dart
+// Old way (manual chunking):
+const chunkSize = 50;
+for (int i = 0; i < command.length; i += chunkSize) {
+  final chunk = command.substring(i, min(i + chunkSize, command.length));
+  pty.write(Utf8Encoder().convert(chunk));
+  await Future.delayed(const Duration(milliseconds: 10));
+}
+
+// New way (automatic backpressure):
+await pty.writeAsync(Utf8Encoder().convert(command));
+```
+
+The `writeAsync()` method automatically handles buffer full conditions by waiting for the buffer to drain, eliminating the need for manual chunking and arbitrary delays.
+
+### Installation
+
+Add to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  flutter_pty:
+    git:
+      url: https://github.com/YOUR_USERNAME/flutter_pty.git
+      ref: feature/buffer-backpressure-support
+```
+
+### Why This Fork?
+
+We needed reliable PTY buffer management for [Echorb Desktop](https://echorb.com), a multi-instance Claude Code orchestrator. The original package required manual chunking with arbitrary delays, which was unreliable for large commands.
+
+Our enhancements:
+- **Buffer monitoring** - Know when PTY is ready for more data
+- **Automatic backpressure** - No more manual chunking needed
+- **Cross-platform** - Works on Windows (ConPTY), Linux, and macOS (forkpty)
+- **Backward compatible** - All existing APIs work unchanged
+
+### Credits
+
+Original repository: https://github.com/TerminalStudio/flutter_pty  
+Fork maintained by: Echorb Team  
+Inspired by: tmux source code analysis

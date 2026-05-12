@@ -23,5 +23,17 @@ A new Flutter FFI plugin project.
 
   s.platform = :osx, '10.11'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  # CocoaPods links the resulting static archive into the host binary via
+  # `-framework flutter_pty`, which lets the linker dead-strip every
+  # symbol nothing references at link time. Dart only touches the FFI
+  # entry points at runtime, so without these `-u` flags the binary
+  # ships with no pty symbols and DynamicLibrary.process() can't find
+  # them. Keep this list in sync with src/flutter_pty.h. Dart_InitializeApiDL
+  # is the Dart Native API init function from src/include/dart_api_dl.c —
+  # without it the DL function pointers stay null and the read loop
+  # crashes on first Dart_PostCObject_DL.
+  s.user_target_xcconfig = {
+    'OTHER_LDFLAGS' => '-Wl,-u,_pty_create -Wl,-u,_pty_write -Wl,-u,_pty_ack_read -Wl,-u,_pty_resize -Wl,-u,_pty_getpid -Wl,-u,_pty_error -Wl,-u,_pty_get_buffer_status -Wl,-u,_pty_write_nonblocking -Wl,-u,_pty_can_write -Wl,-u,_pty_set_discard_notification_port -Wl,-u,_pty_get_discarded_bytes -Wl,-u,_pty_clear_discarded_bytes -Wl,-u,_pty_write_buffered -Wl,-u,_Dart_InitializeApiDL',
+  }
   s.swift_version = '5.0'
 end

@@ -11,7 +11,13 @@ const _libName = 'flutter_pty';
 
 final DynamicLibrary _dylib = () {
   if (Platform.isMacOS || Platform.isIOS) {
-    return DynamicLibrary.open('$_libName.framework/$_libName');
+    // The macOS/iOS podspec builds a static archive; CocoaPods then
+    // links it into the host binary via `-framework flutter_pty`. There
+    // is no real `.framework/flutter_pty` dylib at runtime, so
+    // DynamicLibrary.open() always fails. The matching podspec uses
+    // `-Wl,-u,<symbol>` to keep the FFI exports out of the dead-strip
+    // pass; we resolve them via the process symbol table.
+    return DynamicLibrary.process();
   }
   if (Platform.isAndroid || Platform.isLinux) {
     return DynamicLibrary.open('lib$_libName.so');

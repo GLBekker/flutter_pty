@@ -56,6 +56,13 @@ typedef struct ReadLoopOptions
 
 char *error_message = NULL;
 
+// Forward declarations — newer Clang treats implicit declarations as errors
+// (Wimplicit-function-declaration is on by default in C99+ since Xcode 15).
+static void buffer_manager_update_thresholds(PtyBufferManager *mgr, int rows, int cols);
+static void buffer_manager_notify_discard(PtyBufferManager *mgr, int bytes_discarded);
+static void buffer_manager_start_timer(PtyHandle *handle);
+static void buffer_manager_stop_timer(PtyHandle *handle);
+
 static void *read_loop(void *arg)
 {
     ReadLoopOptions *options = (ReadLoopOptions *)arg;
